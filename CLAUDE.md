@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A capstone project building anomaly/attack detection models on the RBA (Risk-Based Authentication) login dataset. It's a linear script pipeline (no package/module structure, no tests, no build system) that goes: raw 9GB login log → balanced sample → cleaned → feature-engineered → labeled + split → two trained models (Isolation Forest + Random Forest).
 
-There is no requirements.txt/venv checked in. Scripts assume `pandas`, `numpy`, `scikit-learn` are already installed in whatever Python is on PATH. `app.py` (the live serving layer, see below) additionally needs `fastapi`, `pydantic`, and `uvicorn`.
+`requirements.txt` pins every dependency across the pipeline, `app.py`, and `dashboard.py` (versions match what this repo has been developed/tested against). No venv is checked in.
 
 ## Running the pipeline
 
@@ -92,6 +92,17 @@ Streamlit dashboard for the 12-week plan's Week 11 deliverable, polling `app.py`
 Panels: KPI row (from `/health`), an anomaly-score gauge with the IF decision boundary marked, an attack-type distribution bar (fixed color per class), a country choropleth (alpha-2 → alpha-3 via `pycountry`, since the RBA dataset's `country` field is alpha-2), a `rolling_fail_velocity` trend line, and the raw alert table. Auto-refreshes via `time.sleep()` + `st.rerun()` at the bottom of the script (no external autorefresh package). Handles the zero-alerts state explicitly (`st.info` instead of rendering empty charts) and shows an error with a stop if the API is unreachable.
 
 Verified in a real browser via Playwright (`chromium.launch()` — no `chromium-cli` in this environment): both the populated state (seeded brute-force/credential-stuffing/normal events across DE/FR/US) and the empty state render cleanly with no traceback and no console errors. Note the first paint is slow (~10s, Plotly's JS bundle loading inside Streamlit) — don't mistake the gray skeleton placeholders for a failure if you screenshot too early.
+
+`API_BASE_URL` resolves via `st.secrets["API_BASE_URL"]` first (Streamlit Cloud), falling back to the `API_BASE_URL` env var, falling back to `http://127.0.0.1:8000` for local dev — see `_resolve_api_base_url()`.
+
+## Deployment
+
+Two services, deployed separately (Streamlit Community Cloud can't run `app.py`'s FastAPI process alongside the dashboard):
+
+- **Backend (`app.py`)**: Render, via `render.yaml` (Blueprint) or a manual Web Service with build command `pip install -r requirements.txt` and start command `uvicorn app:app --host 0.0.0.0 --port $PORT`. No CORS setup needed — the dashboard calls it server-to-server via `requests`, not from the browser.
+- **Dashboard (`dashboard.py`)**: Streamlit Community Cloud, pointed at this repo/`main`/`dashboard.py`. Once the Render backend has a URL, set it as a Streamlit Cloud secret: `API_BASE_URL = "https://<your-render-service>.onrender.com"`.
+- Render's free tier spins down on idle and cold-starts slowly (~50s) — expect the dashboard's first load after inactivity to show the "cannot reach the API" error briefly before Render wakes up.
+- Both services read `full_labeled.csv` and the two `.pkl` files straight from the repo checkout at startup — nothing else to provision (no database, no object storage).
 - `GET /session/{user_id}` — debug endpoint: a user's tracked state, plus an IP's rolling history/reputation if `ip_address` is passed as a query param.
 - `GET /health` — model-loaded flag and store size counters, including `alerts_in_feed`.
 

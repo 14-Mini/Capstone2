@@ -1,0 +1,12 @@
+pandas==3.0.2
+numpy==2.4.4
+scikit-learn==1.9.0
+imbalanced-learn==0.14.2
+matplotlib==3.10.9
+fastapi==0.139.0
+uvicorn==0.51.0
+pydantic==2.13.4
+streamlit==1.59.1
+plotly==6.9.0
+pycountry==26.2.16
+requests==2.33.1

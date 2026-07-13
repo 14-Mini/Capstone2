@@ -5,6 +5,7 @@ Streamlit dashboard for the RBA Attack Detection API (app.py).
 fail-velocity trend chart, all read from the FastAPI backend's /alerts and
 /health endpoints (no direct DB/model access, no separate state).
 """
+import os
 import pickle
 import time
 from datetime import datetime, timezone
@@ -16,7 +17,17 @@ import pycountry
 import requests
 import streamlit as st
 
-API_BASE_URL = "http://127.0.0.1:8000"
+
+def _resolve_api_base_url():
+    # Streamlit Cloud secrets take priority; falls back to an env var (e.g.
+    # Render) and then localhost for local development.
+    try:
+        return st.secrets["API_BASE_URL"]
+    except Exception:
+        return os.environ.get("API_BASE_URL", "http://127.0.0.1:8000")
+
+
+API_BASE_URL = _resolve_api_base_url()
 IF_MODEL_FILE = "isolation_forest.pkl"
 
 STATUS_GOOD = "#0ca30c"
