@@ -1,0 +1,10 @@
+# Raw RBA dataset (8.5GB) — exceeds GitHub's 100MB file limit.
+# Download from https://www.kaggle.com/datasets/dasgroup/rba-dataset
+rba-dataset.csv
+
+# Python
+__pycache__/
+*.pyc
+
+# Claude Code local session state (machine-specific, not shared config)
+.claude/

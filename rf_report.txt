@@ -1,0 +1,11 @@
+                     precision    recall  f1-score   support
+
+   account_takeover      0.079     0.381     0.131        21
+        brute_force      1.000     1.000     1.000       264
+credential_stuffing      1.000     1.000     1.000       218
+  dictionary_attack      0.996     1.000     0.998       261
+             normal      0.992     0.944     0.967      1671
+
+           accuracy                          0.956      2435
+          macro avg      0.813     0.865     0.819      2435
+       weighted avg      0.986     0.956     0.970      2435
