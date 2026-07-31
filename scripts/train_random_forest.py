@@ -16,10 +16,10 @@ import matplotlib.pyplot as plt
 # CONFIGURATION
 # ============================================================================
 
-TRAIN_FILE = "train.csv"
-VAL_FILE = "val.csv"
-TEST_FILE = "test.csv"
-MODEL_OUTPUT = "random_forest.pkl"
+TRAIN_FILE = "data/splits/train.csv"
+VAL_FILE = "data/splits/val.csv"
+TEST_FILE = "data/splits/test.csv"
+MODEL_OUTPUT = "models/random_forest.pkl"
 
 TARGET_COL = 'attack_type'
 
@@ -240,7 +240,7 @@ plt.ylabel('True Positive Rate')
 plt.title('Random Forest ROC Curves by Attack Class (Test Set)')
 plt.legend(loc='lower right')
 plt.tight_layout()
-plt.savefig('random_forest_roc_auc.png', dpi=150)
+plt.savefig('reports/random_forest_roc_auc.png', dpi=150)
 plt.close()
 print(f"\n  Saved: random_forest_roc_auc.png")
 

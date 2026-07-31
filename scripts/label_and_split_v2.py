@@ -8,8 +8,8 @@ import os
 # CONFIGURATION
 # ============================================================================
 
-INPUT_FILE = "rba_sample_16k_engineered.csv"
-OUTPUT_DIR = "./"
+INPUT_FILE = "data/interim/rba_sample_16k_engineered.csv"
+OUTPUT_DIR = "data/splits/"
 
 # DATA-DRIVEN THRESHOLDS (based on your distribution analysis)
 # Lowered to capture more realistic attack patterns

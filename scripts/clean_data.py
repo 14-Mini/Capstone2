@@ -6,8 +6,8 @@ import time
 # CONFIGURATION
 # ============================================================================
 
-INPUT_FILE = "rba_sample_16k.csv"      # Output from the sampler
-OUTPUT_FILE = "rba_sample_16k_cleaned.csv"  # Cleaned output
+INPUT_FILE = "data/interim/rba_sample_16k.csv"      # Output from the sampler
+OUTPUT_FILE = "data/interim/rba_sample_16k_cleaned.csv"  # Cleaned output
 
 # ============================================================================
 # MAIN SCRIPT

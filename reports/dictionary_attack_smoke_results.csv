@@ -1,0 +1,10 @@
+gap_seconds,fail_count_1min,fail_count_5min,unique_usernames_5min,attack_type,p_dictionary_attack,p_brute_force
+10,3,3,1,brute_force,0.01,0.99
+20,3,3,1,brute_force,0.02,0.98
+30,2,3,1,dictionary_attack,0.92,0.07
+45,1,3,1,dictionary_attack,0.9,0.07
+61,0,3,1,dictionary_attack,0.93,0.0
+75,0,3,1,dictionary_attack,0.93,0.0
+90,0,3,1,dictionary_attack,0.93,0.0
+120,0,2,1,normal,0.02,0.0
+180,0,1,1,normal,0.02,0.0

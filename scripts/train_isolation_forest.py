@@ -13,10 +13,10 @@ import matplotlib.pyplot as plt
 # CONFIGURATION
 # ============================================================================
 
-TRAIN_FILE = "train.csv"
-VAL_FILE = "val.csv"
-TEST_FILE = "test.csv"
-MODEL_OUTPUT = "isolation_forest.pkl"
+TRAIN_FILE = "data/splits/train.csv"
+VAL_FILE = "data/splits/val.csv"
+TEST_FILE = "data/splits/test.csv"
+MODEL_OUTPUT = "models/isolation_forest.pkl"
 
 # Features to use (exclude targets and raw labels)
 FEATURE_COLS = [
@@ -293,7 +293,7 @@ plt.ylabel('True Positive Rate')
 plt.title('Isolation Forest ROC Curve (Test Set)')
 plt.legend(loc='lower right')
 plt.tight_layout()
-plt.savefig('isolation_forest_roc_auc.png', dpi=150)
+plt.savefig('reports/isolation_forest_roc_auc.png', dpi=150)
 plt.close()
 print(f"\n  Saved: isolation_forest_roc_auc.png")
 

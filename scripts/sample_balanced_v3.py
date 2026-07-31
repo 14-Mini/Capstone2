@@ -7,8 +7,8 @@ from collections import defaultdict
 # CONFIGURATION
 # ============================================================================
 
-INPUT_FILE = "rba-dataset.csv"
-OUTPUT_FILE = "rba_sample_16k.csv"
+INPUT_FILE = "data/raw/rba-dataset.csv"
+OUTPUT_FILE = "data/interim/rba_sample_16k.csv"
 CHUNK_SIZE = 500000
 RANDOM_SEED = 42
 

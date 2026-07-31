@@ -8,8 +8,8 @@ from collections import defaultdict
 # CONFIGURATION
 # ============================================================================
 
-INPUT_FILE = "rba_sample_16k_cleaned.csv"
-OUTPUT_FILE = "rba_sample_16k_engineered.csv"
+INPUT_FILE = "data/interim/rba_sample_16k_cleaned.csv"
+OUTPUT_FILE = "data/interim/rba_sample_16k_engineered.csv"
 
 # Time windows for rolling features (in minutes)
 WINDOW_1MIN = 1

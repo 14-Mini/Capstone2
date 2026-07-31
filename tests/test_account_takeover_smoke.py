@@ -39,7 +39,7 @@ GAP_HOURS = [1, 6, 12, 18, 22, 24, 26, 30, 48, 120]
 
 
 def pick_seed_user():
-    df = pd.read_csv("full_labeled.csv", low_memory=False)
+    df = pd.read_csv("data/splits/full_labeled.csv", low_memory=False)
     df["login_timestamp"] = pd.to_datetime(df["login_timestamp"], errors="coerce")
     counts = df.groupby("user_id").size()
     for uid in counts[counts >= 5].index:
@@ -134,10 +134,10 @@ def main():
         result = pd.DataFrame(rows)
         print("\nATO sweep (new country + new device + success, gap climbing):")
         print(result.to_string(index=False))
-        result.to_csv("ato_smoke_results.csv", index=False)
-        print("\nSaved: ato_smoke_results.csv")
+        result.to_csv("reports/ato_smoke_results.csv", index=False)
+        print("\nSaved: reports/ato_smoke_results.csv")
 
-        with open("isolation_forest.pkl", "rb") as f:
+        with open("models/isolation_forest.pkl", "rb") as f:
             if_data = pickle.load(f)
         offset = if_data["model"].offset_
         print(f"\nIsolation Forest decision boundary (anomaly_score domain): {-offset:.4f}")
