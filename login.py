@@ -46,18 +46,35 @@ def parse_user_agent(ua):
 
 TEMPLATE = """
 <!doctype html>
-<title>Login</title>
-<style>
-body { font-family: sans-serif; background: #fff; }
-form { width: 200px; margin: 100px auto; }
-input, button { display: block; width: 100%; margin-top: 8px; }
-</style>
-<form method="post">
-<input name="username" placeholder="Username" required>
-<input name="password" type="password" placeholder="Password" required>
-<button type="submit">Log in</button>
-{% if message %}<p>{{ message }}</p>{% endif %}
-</form>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Login</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #fff;
+    }
+    form {
+      width: 200px;
+      margin: 100px auto;
+    }
+    input, button {
+      display: block;
+      width: 100%;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <form method="post">
+    <input name="username" placeholder="Username" required>
+    <input name="password" type="password" placeholder="Password" required>
+    <button type="submit">Log in</button>
+    {% if message %}<p>{{ message }}</p>{% endif %}
+  </form>
+</body>
+</html>
 """
 
 

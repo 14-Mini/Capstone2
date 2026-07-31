@@ -8,31 +8,69 @@ API_BASE_URL = os.environ.get("API_BASE_URL", "http://127.0.0.1:8000")
 
 TEMPLATE = """
 <!doctype html>
-<title>RBA Attack Detection</title>
-<style>
-body { font-family: sans-serif; margin: 2rem; }
-.kpi { display: flex; gap: 2rem; margin-bottom: 1rem; }
-.kpi div { font-size: 1.5rem; font-weight: bold; }
-table { border-collapse: collapse; width: 100%; }
-th, td { border: 1px solid #ccc; padding: 4px 8px; text-align: left; font-size: 0.9rem; }
-</style>
-<h1>RBA Attack Detection &mdash; Live Dashboard</h1>
-{% if error %}
-<p style="color:red">Cannot reach the API at {{ api_url }}: {{ error }}</p>
-{% else %}
-<div class="kpi">
-  <div>Alerts<br>{{ health.alerts_in_feed }}</div>
-  <div>Users<br>{{ health.users_tracked }}</div>
-  <div>IPs<br>{{ health.ips_tracked }}</div>
-  <div>Models loaded<br>{{ "yes" if health.models_loaded else "no" }}</div>
-</div>
-<table>
-<tr><th>Time</th><th>User</th><th>IP</th><th>Country</th><th>Attack type</th></tr>
-{% for a in alerts %}
-<tr><td>{{ a.timestamp }}</td><td>{{ a.user_id }}</td><td>{{ a.ip_address }}</td><td>{{ a.country }}</td><td>{{ a.attack_type }}</td></tr>
-{% endfor %}
-</table>
-{% endif %}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>RBA Attack Detection</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2rem;
+    }
+    .kpi {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1rem;
+    }
+    .kpi div {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 4px 8px;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>RBA Attack Detection &mdash; Live Dashboard</h1>
+
+  {% if error %}
+    <p style="color:red">Cannot reach the API at {{ api_url }}: {{ error }}</p>
+  {% else %}
+    <div class="kpi">
+      <div>Alerts<br>{{ health.alerts_in_feed }}</div>
+      <div>Users<br>{{ health.users_tracked }}</div>
+      <div>IPs<br>{{ health.ips_tracked }}</div>
+      <div>Models loaded<br>{{ "yes" if health.models_loaded else "no" }}</div>
+    </div>
+    <table>
+      <tr>
+        <th>Time</th>
+        <th>User</th>
+        <th>IP</th>
+        <th>Country</th>
+        <th>Attack type</th>
+      </tr>
+      {% for a in alerts %}
+      <tr>
+        <td>{{ a.timestamp }}</td>
+        <td>{{ a.user_id }}</td>
+        <td>{{ a.ip_address }}</td>
+        <td>{{ a.country }}</td>
+        <td>{{ a.attack_type }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% endif %}
+</body>
+</html>
 """
 
 
