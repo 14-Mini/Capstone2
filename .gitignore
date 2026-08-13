@@ -6,5 +6,8 @@ rba-dataset.csv
 __pycache__/
 *.pyc
 
+# Runtime logs
+*.log
+
 # Claude Code local session state (machine-specific, not shared config)
 .claude/
