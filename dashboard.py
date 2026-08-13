@@ -101,6 +101,7 @@ TEMPLATE = """
           <th>User</th>
           <th>IP</th>
           <th>Country</th>
+          <th>Device</th>
           <th>Attack type</th>
         </tr>
       </thead>
@@ -111,6 +112,7 @@ TEMPLATE = """
           <td>{{ a.user_id }}</td>
           <td>{{ a.ip_address }}</td>
           <td>{{ a.country }}</td>
+          <td>{{ a.device_type }}</td>
           <td class="attack-type {{ 'normal' if a.attack_type == 'Normal' else 'alert' }}">{{ a.attack_type }}</td>
         </tr>
         {% endfor %}
