@@ -28,13 +28,34 @@ def device_fingerprint(device_type, browser_name_and_version, os_name_and_versio
     return f"{device_type}|{strip_version(browser_name_and_version)}|{strip_version(os_name_and_version)}"
 
 
+def count_fails_successes(window):
+    fail_count = sum(1 for h in window if not h[2])
+    success_count = sum(1 for h in window if h[2])
+    return fail_count, success_count
+
+
+def login_success_rate(fail_count, success_count):
+    total = fail_count + success_count
+    return (success_count / total) if total > 0 else 1.0
+
+
+def fail_to_success_ratio(fail_count, success_count):
+    if success_count > 0:
+        return min(fail_count / success_count, 999)
+    return fail_count
+
+
+def geo_anomaly_flag(event_country, country_counts):
+    typical_country = country_counts.most_common(1)
+    return 1 if (typical_country and event_country != typical_country[0][0]) else 0
+
+
 class SessionStore:
     def __init__(self):
         self.ip_history = defaultdict(list)  # ip -> list of (ts, user_id, success)
         self.user_last_login = {}            # user_id -> ts
         self.user_devices = defaultdict(set)  # user_id -> set of fingerprints
         self.user_country_counts = defaultdict(Counter)  # user_id -> Counter(country)
-        self.ip_reputation = {}              # ip -> historical mean(is_attack_ip); never populated, always 0.0
         self.alerts = deque(maxlen=ALERT_FEED_MAXLEN)
         self._next_alert_id = 1
 
@@ -51,11 +72,9 @@ class SessionStore:
         recent_1min = [h for h in history if h[0] >= now_ts - WINDOW_1MIN]
         recent_5min = [h for h in history if h[0] >= now_ts - WINDOW_5MIN]
 
-        fail_count_1min = sum(1 for h in recent_1min if not h[2])
-        fail_count_5min = sum(1 for h in recent_5min if not h[2])
-        success_count_1min = sum(1 for h in recent_1min if h[2])
-        success_count_5min = sum(1 for h in recent_5min if h[2])
-        fail_count_10min = sum(1 for h in history if not h[2])
+        fail_count_1min, success_count_1min = count_fails_successes(recent_1min)
+        fail_count_5min, success_count_5min = count_fails_successes(recent_5min)
+        fail_count_10min, _ = count_fails_successes(history)
 
         users_in_window = {h[1] for h in recent_5min}
         users_in_window.add(user)
@@ -65,35 +84,24 @@ class SessionStore:
         else:
             time_since_last_login = NO_PREVIOUS_LOGIN
 
-        typical_country = self.user_country_counts[user].most_common(1)
-        geo_anomaly_flag = 1 if (typical_country and event.country != typical_country[0][0]) else 0
-
         fingerprint = device_fingerprint(
             event.device_type, event.browser_name_and_version, event.os_name_and_version
         )
         is_new_device = 0 if fingerprint in self.user_devices[user] else 1
 
-        total_1min = fail_count_1min + success_count_1min
-        login_success_rate_1min = (success_count_1min / total_1min) if total_1min > 0 else 1.0
-
-        if success_count_5min > 0:
-            fail_to_success_ratio_5min = min(fail_count_5min / success_count_5min, 999)
-        else:
-            fail_to_success_ratio_5min = fail_count_5min
-
         dt = datetime.fromtimestamp(now_ts, tz=timezone.utc)
 
         return {
             'time_of_day': dt.hour,
-            'ip_reputation_score': self.ip_reputation.get(ip, 0.0),
-            'geo_anomaly_flag': geo_anomaly_flag,
+            'ip_reputation_score': 0.0,  # not yet populated from a real IP reputation source
+            'geo_anomaly_flag': geo_anomaly_flag(event.country, self.user_country_counts[user]),
             'fail_count_1min': fail_count_1min,
             'fail_count_5min': fail_count_5min,
             'unique_usernames_5min': len(users_in_window),
             'rolling_fail_velocity': fail_count_10min / 10.0,
-            'login_success_rate_1min': login_success_rate_1min,
+            'login_success_rate_1min': login_success_rate(fail_count_1min, success_count_1min),
             'time_since_last_login': time_since_last_login,
-            'fail_to_success_ratio_5min': fail_to_success_ratio_5min,
+            'fail_to_success_ratio_5min': fail_to_success_ratio(fail_count_5min, success_count_5min),
             'is_new_device': is_new_device,
         }, fingerprint
 

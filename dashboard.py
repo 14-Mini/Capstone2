@@ -125,8 +125,12 @@ TEMPLATE = """
 @app.route("/")
 def index():
     try:
-        health = requests.get(f"{API_BASE_URL}/health", timeout=5).json()
-        alerts = requests.get(f"{API_BASE_URL}/alerts", params={"limit": 100}, timeout=5).json()["alerts"]
+        health_response = requests.get(f"{API_BASE_URL}/health", timeout=5)
+        health = health_response.json()
+
+        alerts_response = requests.get(f"{API_BASE_URL}/alerts", params={"limit": 100}, timeout=5)
+        alerts = alerts_response.json()["alerts"]
+
         return render_template_string(TEMPLATE, health=health, alerts=alerts, error=None, api_url=API_BASE_URL)
     except requests.exceptions.RequestException as exc:
         return render_template_string(TEMPLATE, error=str(exc), api_url=API_BASE_URL)
