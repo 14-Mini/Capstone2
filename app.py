@@ -184,8 +184,7 @@ def predict(event: LoginEvent):
         cls: float(p) for cls, p in zip(rf_model.classes_, rf_model.predict_proba(feature_row)[0])
     }
 
-    if attack_type != "normal":
-        store.record_alert(event, now_ts, attack_type, probabilities, features)
+    store.record_alert(event, now_ts, attack_type, probabilities, features)
 
     store.ingest(event, now_ts, fingerprint)
 

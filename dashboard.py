@@ -80,6 +80,14 @@ TEMPLATE = """
     .attack-type.alert {
       color: #c62828;
     }
+    .login-result.success {
+      color: #2e7d32;
+      font-weight: 600;
+    }
+    .login-result.failed {
+      color: #c62828;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -102,6 +110,7 @@ TEMPLATE = """
           <th>IP</th>
           <th>Country</th>
           <th>Device</th>
+          <th>Login</th>
           <th>Attack type</th>
         </tr>
       </thead>
@@ -113,7 +122,8 @@ TEMPLATE = """
           <td>{{ a.ip_address }}</td>
           <td>{{ a.country }}</td>
           <td>{{ a.device_type }}</td>
-          <td class="attack-type {{ 'normal' if a.attack_type == 'Normal' else 'alert' }}">{{ a.attack_type }}</td>
+          <td class="login-result {{ 'success' if a.login_successful else 'failed' }}">{{ 'Success' if a.login_successful else 'Failed' }}</td>
+          <td class="attack-type {{ 'normal' if a.attack_type == 'normal' else 'alert' }}">{{ a.attack_type }}</td>
         </tr>
         {% endfor %}
       </tbody>
