@@ -5,10 +5,8 @@ from datetime import datetime, timezone
 
 import requests
 from flask import Flask, render_template_string, request
-from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
 DB_FILE = "data/users.db"
 APP_BASE_URL = os.environ.get("APP_BASE_URL", "http://127.0.0.1:8000")
 FALLBACK_COUNTRY = "AU"  # used when the IP can't be geolocated (private/loopback, or lookup failure)
@@ -38,6 +36,16 @@ def geolocate_country(ip):
 
     _geo_cache[ip] = country
     return country
+
+
+def client_ip():
+    """Original client IP -- the leftmost entry in X-Forwarded-For, since each
+    proxy hop appends its own address to the end of the list. Falls back to
+    remote_addr when there's no proxy in front (e.g. local testing)."""
+    forwarded = request.headers.get("X-Forwarded-For")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.remote_addr
 
 
 def parse_user_agent(ua):
@@ -90,11 +98,12 @@ def login():
         login_successful = bool(row and row[0] == request.form["password"])
         message = "Login successful." if login_successful else "Invalid username or password."
 
+        ip = client_ip()
         device_type, browser, os_name = parse_user_agent(request.headers.get("User-Agent", ""))
         payload = {
-            "ip_address": request.remote_addr,
+            "ip_address": ip,
             "user_id": request.form["username"],
-            "country": geolocate_country(request.remote_addr),
+            "country": geolocate_country(ip),
             "device_type": device_type,
             "browser_name_and_version": browser,
             "os_name_and_version": os_name,
