@@ -5,11 +5,13 @@ from datetime import datetime, timezone
 
 import requests
 from flask import Flask, render_template_string, request
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
 DB_FILE = "data/users.db"
 APP_BASE_URL = os.environ.get("APP_BASE_URL", "http://127.0.0.1:8000")
-FALLBACK_COUNTRY = "US"  # used when the IP can't be geolocated (private/loopback, or lookup failure)
+FALLBACK_COUNTRY = "AU"  # used when the IP can't be geolocated (private/loopback, or lookup failure)
 
 _geo_cache = {}
 
